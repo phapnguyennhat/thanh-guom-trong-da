@@ -59,9 +59,79 @@ int Events::get(int i) const
 
 /* * * BEGIN implementation of class BaseBag * * */
 
+int BaseBag::set_soluongitem(BaseBag*head)
+{
+    int count=0;
+    while(head!=NULL)
+    {
+        count++;
+        head=head->next;
+    }
+    soluongitem=count;
+    return count;
+}
+void BaseBag::nhat_item(BaseBag**head,BaseItem* item)
+{
+    BaseBag*newItem=makeItem(item);
+    newItem->next=*head;
+    *head=newItem;
+}
+BaseBag* BaseBag::makeItem(BaseItem* take_item)
+{
+    BaseBag*newitem=new BaseBag();
+    newitem->item=take_item;
+    newitem->next=NULL;
+    return newitem;
+}
+bool BaseBag::insertFirst(BaseItem*item)
+{
+    if(item->getTypeItem()==ANTIDOTE&&knight->getknighttype()==DRAGON) return 0;
+    else if(soluongitem>=knight->getsize()) return 0;
+    return 1;
+}
+BaseItem* BaseBag::get(ItemType itemType)
+{
+    //nếu đối tượng đầu danh sách cùng kiểu với itemtype thì tra về cái đó không thì return null
+}
 /* * * END implementation of class BaseBag * * */
 
 /* * * BEGIN implementation of class BaseItem * * */
+ItemType BaseItem::getTypeItem()
+{
+    return itemType;
+}
+void BaseItem::setItemType(ItemType type)
+{
+    itemType=type;
+}
+BaseItem* BaseItem::create(ItemType type)
+{
+    BaseItem* newItem=nullptr;
+    switch (type)
+    {
+    case ANTIDOTE:
+        newItem=new Antidote();
+        newItem->setItemType(type);
+        break;
+    case PHOENIXDOWNI:
+        newItem=new PhoenixdownI();
+        newItem->setItemType(type);
+        break;
+    case PHOENIXDOWNII:
+        newItem=new PhoenixdownII();
+        newItem->setItemType(type);
+        break;
+    case PHOENIXDOWNIII:
+        newItem=new PhoenixdownIII();
+        newItem->setItemType(type);
+        break;
+    case PHOENIXDOWNIV:
+        newItem=new PhoenixdownIV();
+        newItem->setItemType(type);
+        break;
+    return newItem;
+    }
+}
 bool Antidote::canUse(BaseKnight *knight)
 {
     if(knight->hasPoison()&&quantity!=0) return 1;
@@ -117,6 +187,10 @@ void PhoenixdownIV::use(BaseKnight *knight)
 /* * * END implementation of class BaseItem * * */
 
 /* * * BEGIN implementation of class BaseKnight * * */
+int BaseKnight::getsize()
+{
+    return size;
+}
 KnightType BaseKnight::getknighttype()
 {
     return knightType;
@@ -203,9 +277,55 @@ void BaseKnight::setknighttype(KnightType type)
 /* * * END implementation of class BaseKnight * * */
 
 /* * * BEGIN implementation of class BaseOpponent * * */
+MadBear::MadBear()
+{
+    gil=100;
+    baseDamage=10;
+}
+Bandit::Bandit()
+{
+    gil=150;
+    baseDamage=15;
+}
+LordLupin::LordLupin()
+{
+    gil=450;
+    baseDamage=45;
+}
+Elf::Elf()
+{
+    gil=750;
+    baseDamage=75;
+}
+Troll::Troll()
+{
+    gil=800;
+    baseDamage=95;
+}
+void Hades::fight(BaseKnight*knight)
+{
+    if(knight->getlevel()==10||(knight->getknighttype()==PALADIN&&knight->getlevel()>8))
+    {
+        winHades=1;
+        // nhan khien paladin
+    }
+    else 
+    {
+        knight->sethp(0);
+    }
+}
 void OmegaWeapon::fight(BaseKnight*knight)
 {
-
+    if(knight->getknighttype()==DRAGON||(knight->gethp()==knight->getmaxhp()&&knight->getlevel()==10))
+    {
+        knight->setlevel(10);
+        knight->setgil(999);
+        winOmegaWeapon=1;
+    }
+    else
+    {
+        knight->sethp(0);
+    }
 }
 void DurianGarden::fight(BaseKnight*knight)
 {
@@ -268,6 +388,49 @@ void BaseOpponent::fight(BaseKnight*knight)
         // hien thuc ham chuyen tien len tren
         knight->setlevel(knight->getlevel() + 1);
     }
+}
+BaseOpponent* BaseOpponent::create(int eventid)
+{
+    BaseOpponent*newopponent=NULL;
+    switch (eventid)
+    {
+    case 1:
+        newopponent=new MadBear();
+        break;
+    case 2:
+        newopponent=new Bandit();
+        break;
+    case 3:
+        newopponent=new LordLupin();
+        break;
+    case 4:
+        newopponent=new Elf();
+        break;
+    case 5:
+        newopponent=new Troll();
+        break;
+    case 6:
+        newopponent=new Tornbery();
+        break;
+    case 7:
+        newopponent=new QueenOfCards();
+        break;
+    case 8:
+        newopponent=new NinaDeRings();
+        break;
+    case 9:
+        newopponent=new DurianGarden();
+        break;
+    case 10:
+        newopponent=new OmegaWeapon();
+        break;
+    case 11:
+        newopponent=new Hades();
+        break;
+    default:
+        break;
+    }
+    return newopponent;
 }
 void BaseOpponent::set_info(int i,int eventid)
 {
