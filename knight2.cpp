@@ -61,14 +61,104 @@ int Events::get(int i) const
 
 /* * * END implementation of class BaseBag * * */
 
+/* * * BEGIN implementation of class BaseItem * * */
+bool Antidote::canUse(BaseKnight *knight)
+{
+    if(knight->hasPoison()&&quantity!=0) return 1;
+    return 0;
+}
+void Antidote::use(BaseKnight*knight)
+{
+    knight->giai_doc();
+    quantity--;
+}
+bool PhoenixdownI::canUse(BaseKnight*knight)
+{
+    if(quantity!=0&&knight->gethp()<=0) return 1;
+    return 0;
+}
+void PhoenixdownI::use(BaseKnight*knight)
+{
+    knight->sethp(knight->getmaxhp());
+    quantity--;
+}
+bool PhoenixdownII::canUse(BaseKnight*knight)
+{
+    if(quantity!=0&&knight->gethp()<knight->getmaxhp()/4) return 1;
+    return 0;
+}
+void PhoenixdownII::use(BaseKnight*knight)
+{
+    knight->sethp(knight->getmaxhp());
+    quantity--;
+}
+bool PhoenixdownIII::canUse(BaseKnight*knight)
+{
+    if(quantity!=0&&knight->gethp()<knight->getmaxhp()/3) return 1;
+    return 0;
+}
+void PhoenixdownIII::use(BaseKnight*knight)
+{
+    if(knight->gethp()<=0) knight->sethp(knight->getmaxhp()/3);
+    else knight->sethp(knight->gethp()+knight->getmaxhp()/4);
+    quantity--;
+}
+bool PhoenixdownIV::canUse(BaseKnight*knight)
+{
+    if(quantity!=0&&knight->gethp(),knight->getmaxhp()/2) return 1;
+    return 0;
+}
+void PhoenixdownIV::use(BaseKnight *knight)
+{
+    if(knight->gethp()<=0) knight->sethp(knight->getmaxhp()/2);
+    else knight->sethp(knight->gethp()+knight->getmaxhp()/5);
+    quantity--;
+}
+/* * * END implementation of class BaseItem * * */
+
 /* * * BEGIN implementation of class BaseKnight * * */
+KnightType BaseKnight::getknighttype()
+{
+    return knightType;
+}
+void BaseKnight::setgil(int gi)
+{
+    gil=gi;
+}
+int BaseKnight::getgil()
+{
+    return gil;
+}
+void BaseKnight::sethp(int mau)
+{
+    hp=mau;
+}
+int BaseKnight::gethp()
+{
+    return hp;
+}
+int BaseKnight::getmaxhp()
+{
+    return maxhp;
+}
+bool BaseKnight::hasPoison()
+{
+    return poison;
+}
+void BaseKnight::trung_doc(){
+    poison=1;
+}
+void BaseKnight::giai_doc(){
+    poison=0;
+}
 int BaseKnight::getlevel(){
     return level;
 }
-void BaseKnight::changehp(BaseOpponent*opponent)
+void BaseKnight::setlevel(int le)
 {
-    hp=hp-opponent->baseDamage*(opponent->level-level);
+    level=le;
 }
+
 BaseKnight *BaseKnight::create(int id, int maxhp, int level, int gil, int antidote, int phoenixdownI)
 {
     BaseKnight *newKnight = nullptr;
@@ -113,13 +203,75 @@ void BaseKnight::setknighttype(KnightType type)
 /* * * END implementation of class BaseKnight * * */
 
 /* * * BEGIN implementation of class BaseOpponent * * */
-void BaseOpponent::setinfo_monster(int i, int eventid)
+void OmegaWeapon::fight(BaseKnight*knight)
 {
-    level = (i + eventid) % 10 + 1;
-    int arr_baseDamage[6] = {0, 10, 15, 45, 75, 95};
-    int arr_gil[6] = {0, 100, 150, 450, 750, 800};
-    baseDamage = arr_baseDamage[eventid];
-    gil = arr_gil[eventid];
+
+}
+void DurianGarden::fight(BaseKnight*knight)
+{
+    knight->sethp(knight->getmaxhp());
+}
+void Tornbery::fight(BaseKnight*knight)
+{
+    if(knight->getlevel()<level)
+    {
+        knight->trung_doc();
+        //luc tui do de giai doc
+        //neu khong giai doc duoc
+        if(knight->hasPoison()==1)
+        {
+            knight->sethp(knight->gethp()-10);
+            //bo 3 vat pham
+        }
+        if(knight->gethp()<=0)
+        {
+            //hien thuc ham hoi sinh
+        }
+
+    }
+    else
+    {
+        knight->setlevel(knight->getlevel()+1);
+    }
+}
+void QueenOfCards::fight(BaseKnight*knight)
+{
+    if(knight->getlevel()<level)
+    {
+        knight->setgil(knight->getgil()/2);
+    }
+    else
+    {
+        knight->setgil(knight->getgil()*2);
+        knight->setlevel(knight->getlevel()+1);
+        //hien thuc ham chuyen tien len tren
+    }
+}
+void NinaDeRings::fight(BaseKnight*knight)
+{
+    if(knight->getgil()>=50&&knight->gethp()<knight->getmaxhp()/3)
+    {
+        knight->setgil(knight->getgil()-50);
+        knight->sethp(knight->gethp()+knight->getmaxhp()/5);
+    }
+}
+void BaseOpponent::fight(BaseKnight*knight)
+{
+    if (knight->getlevel() < level)
+    {
+        knight->sethp(knight->gethp() - baseDamage * (knight->getlevel() - level));
+        if(knight->gethp()<=0);  //tim tui do hien thuc ham hoi sinh
+    }
+    else
+    {
+        knight->setgil(knight->getgil() + gil);
+        // hien thuc ham chuyen tien len tren
+        knight->setlevel(knight->getlevel() + 1);
+    }
+}
+void BaseOpponent::set_info(int i,int eventid)
+{
+    level=(i+eventid)%10+1;
 }
 /* * * END implementation of class BaseOpponent * * */
 
@@ -155,24 +307,21 @@ ArmyKnights::~ArmyKnights()
 //  return false neu hiep si cuoi chet
 bool ArmyKnights::fight(BaseOpponent*opponent)  //nhung thay doi cua mang doi quan se viet tren ham nay 
 {
-    if(lastKnight()->getlevel()<opponent->level) //danh thua thiet lap lai hp, ham hoi sinh se de rieng
-    {
-        lastKnight()->changehp(opponent); // goi them ham hoi sinh
-    }
-
+    
     if(lastKnight()==NULL) return false;
+    return true;
 }
 //return true neu danh bai boss
 bool ArmyKnights::adventure(Events*events)  
 {
-    BaseOpponent *monster=new BaseOpponent();
-    for (int i = 0; i < events->count(); i++)
-    {
-        monster->setinfo_monster(i,events->get(i));
-        if(fight(monster)==0){
-            return false;
-        }
-    }
+    // BaseOpponent *monster=new BaseOpponent();
+    // for (int i = 0; i < events->count(); i++)
+    // {
+    //     monster->setinfo_monster(i,events->get(i));
+    //     if(fight(monster)==0){
+    //         return false;
+    //     }
+    // }
     
 }
 int ArmyKnights::count() const //tra ve so luong knight

@@ -20,12 +20,62 @@ public:
 
 class BaseOpponent
 {
-    public:
+    protected:
     int level;
     int gil;
     int baseDamage;
     public:
-    void setinfo_monster(int i,int eventid);
+    void set_info(int i,int eventid);       //set level
+    virtual void fight(BaseKnight*knight);
+    BaseOpponent*create(int eventid);
+};
+class MadBear :public BaseOpponent
+{
+public:
+    
+};
+class Bandit:public BaseOpponent
+{
+
+};
+class LordLupin :public BaseOpponent
+{
+    
+};
+class Elf:public BaseOpponent
+{
+
+};
+class Troll:public BaseOpponent
+{
+
+};
+class Tornbery:public BaseOpponent
+{
+public:
+    void fight(BaseKnight*knight);
+};
+class QueenOfCards:public BaseOpponent
+{
+    public:
+    void fight(BaseKnight*knight);
+};
+class NinaDeRings:public BaseOpponent
+{
+public:
+    void fight(BaseKnight*knight);
+};
+class DurianGarden:public BaseOpponent
+{
+    void fight(BaseKnight*knight);
+};
+class OmegaWeapon :public BaseOpponent
+{
+    void fight(BaseKnight*knight);
+};
+class Hades :public BaseOpponent
+{
+
 };
 
 enum KnightType
@@ -104,11 +154,20 @@ protected:
     int phoenixdownI;   //chua chac co cai nay
     BaseBag *bag;       //tui do
     KnightType knightType;
-
+    bool poison=0;
 public:
+    KnightType getknighttype();
+    void setgil(int gi);
+    int getgil();
+    void sethp(int mau);
+    int gethp();
+    int getmaxhp();
+    void trung_doc();
+    void giai_doc();
+    bool hasPoison();
     void revival(int hp,int gil,int phoenixdown);
+    void setlevel(int le);
     int getlevel();
-    void changehp(BaseOpponent*opponent);
     void setknighttype(KnightType type);
     string toString() const;
     BaseKnight();
@@ -142,9 +201,36 @@ public:
 
 class BaseItem
 {
+protected:
+    int quantity;
 public:
     virtual bool canUse(BaseKnight *knight) = 0;
     virtual void use(BaseKnight *knight) = 0;
+};
+class Antidote:public BaseItem
+{
+    bool canUse(BaseKnight *knight);
+    void use(BaseKnight *knight);
+};
+class PhoenixdownI :public BaseItem
+{
+    bool canUse(BaseKnight *knight);
+    void use(BaseKnight *knight);
+};
+class PhoenixdownII :public BaseItem
+{
+    bool canUse(BaseKnight *knight);
+    void use(BaseKnight *knight);
+};
+class PhoenixdownIII :public BaseItem
+{
+    bool canUse(BaseKnight *knight);
+    void use(BaseKnight *knight);
+};
+class PhoenixdownIV :public BaseItem
+{
+    bool canUse(BaseKnight *knight);
+    void use(BaseKnight *knight);
 };
 
 class Events
