@@ -9,64 +9,13 @@ bool is_Lancelot(int maxhp);
 bool is_Dragon(int maxhp);
 enum ItemType
 { ANTIDOTE,PHOENIXDOWNI,PHOENIXDOWNII,PHOENIXDOWNIII,PHOENIXDOWNIV};
-
+string nameItem[5]={"Antidote","PhoenixI","PhoenixII","PhoenixIII","PhoenixIV"};
 enum KnightType
 {
     PALADIN = 0,
     LANCELOT = 1,
     DRAGON = 2,
     NORMAL = 3
-};
-
-class BaseBag
-{
-private:
-    BaseItem*item;
-    int soluongitem;
-    BaseBag*next;
-    BaseKnight*knight;
-public:
-    void popFront(BaseBag**head);
-    void swap(BaseBag**head,int vitri);
-    int set_soluongitem(BaseBag*head);
-    void nhat_item(BaseBag**head,BaseItem*item);
-    BaseBag*makeItem(BaseItem*take_item);   //tao phan tu
-    virtual bool insertFirst(BaseItem *item);
-    virtual BaseItem *get(ItemType itemType);
-    virtual string toString() const;
-};
-class BaseKnight
-{
-protected:
-    int size;
-    int id;
-    int hp;
-    int maxhp;
-    int level;
-    int gil;
-    int antidote;
-    int phoenixdownI;   //chua chac co cai nay
-    BaseBag *bag;       //tui do
-    KnightType knightType;
-    bool poison=0;
-public:
-    int getsize();
-    KnightType getknighttype();
-    void setgil(int gi);
-    int getgil();
-    void sethp(int mau);
-    int gethp();
-    int getmaxhp();
-    void trung_doc();
-    void giai_doc();
-    bool hasPoison();
-    void revival(int hp,int gil,int phoenixdown);
-    void setlevel(int le);
-    int getlevel();
-    void setknighttype(KnightType type);
-    string toString() const;
-    BaseKnight();
-    static BaseKnight *create(int id, int maxhp, int level, int gil, int antidote, int phoenixdownI);
 };
 
 class BaseItem
@@ -82,6 +31,84 @@ public:
     virtual void use(BaseKnight *knight) = 0;
 };
 
+class BaseBag
+{
+public:
+    int size;
+    BaseItem*item;
+    int soluongitem=0;
+    BaseBag*next;
+    // BaseBag*Bag;
+public:
+    BaseItem*getitem();
+    void popFront(BaseBag**head);
+    void swap(BaseBag**head,int vitri);
+    int set_soluongitem(BaseBag*head);
+    void nhat_item(BaseBag**head,BaseItem*item);
+    BaseBag*makeItem(BaseItem*take_item);   //tao phan tu
+    virtual bool insertFirst(BaseItem *item);
+    virtual BaseItem *get(ItemType itemType,BaseBag*Bag);
+    virtual string toString(BaseBag*bag) const;
+};
+class BaseKnight
+{
+protected:
+    int id;
+    int hp;
+    int maxhp;
+    int level;
+    int gil;
+    int antidote;
+    int phoenixdownI;   //chua chac co cai nay
+    static BaseBag *bag;       //tui do
+    KnightType knightType;
+    bool poison=0;
+public:
+    void tim_do(BaseKnight*knight);
+    BaseBag* getbag();
+    int getsize();
+    KnightType getknighttype();
+    void setgil(int gi);
+    int getgil();
+    void sethp(int mau);
+    int gethp();
+    int getmaxhp();
+    void trung_doc();
+    void giai_doc();
+    bool hasPoison();
+    void setlevel(int le);
+    int getlevel();
+    void setknighttype(KnightType type);
+    string toString() const;
+    BaseKnight();
+    static BaseKnight *create(int id, int maxhp, int level, int gil, int antidote, int phoenixdownI);
+};
+
+class BagPaladin:public BaseBag,public BaseKnight
+{
+public:
+    BagPaladin();
+    BagPaladin(BaseKnight*knight,int phoenidownI,int antidote);
+};
+class BagLancelot:public BaseBag,public BaseKnight
+{
+public:
+    BagLancelot();
+    BagLancelot(BaseKnight*knight,int phoenidownI,int antidote);
+};
+class BagDragon:public BaseBag ,public BaseKnight
+{
+public:
+    bool insertFirst(BaseItem *item);
+    BagDragon();
+    BagDragon(BaseKnight*knight,int phoenidownI,int antidote);
+};
+class BagNormal:public BaseBag,public BaseKnight
+{
+public:
+    BagNormal();
+    BagNormal(BaseKnight*knight,int phoenidownI,int antidote);
+};
 
 class BaseOpponent
 {
@@ -159,7 +186,6 @@ public:
     ParadinKnight();
     ParadinKnight(int i, int max, int le, int gi, int anti, int pho)
     {
-        size=9999;
         id = i;
         maxhp = max;
         level = le;
@@ -174,8 +200,6 @@ public:
     LancelotKnight();
     LancelotKnight(int i, int max, int le, int gi, int anti, int pho)
     {
-        size=16;
-
         id = i;
         maxhp = max;
         level = le;
@@ -190,7 +214,6 @@ public:
     DragonKnight();
     DragonKnight(int i, int max, int le, int gi, int anti, int pho)
     {
-        size=14;
 
         id = i;
         maxhp = max;
@@ -206,7 +229,6 @@ public:
     NormalKnight();
     NormalKnight(int i, int max, int le, int gi, int anti, int pho)
     {
-        size=19;
         id = i;
         maxhp = max;
         level = le;
@@ -220,6 +242,7 @@ class ArmyKnights
 {
 private:
     bool winOmegaWeapon=0;
+    bool winhades=0;
     BaseKnight **quandoi;
     int n;
     bool paladinshield;
@@ -274,6 +297,7 @@ class Events
 public:
     int count() const;
     int get(int i) const;
+    Events();
     Events(const string &file_events);
     ~Events();
 
