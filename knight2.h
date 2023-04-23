@@ -4,9 +4,7 @@
 #include "main.h"
 
 // #define DEBUG
-bool is_Paladin(int maxhp);
-bool is_Lancelot(int maxhp);
-bool is_Dragon(int maxhp);
+
 enum ItemType
 { ANTIDOTE,PHOENIXDOWNI,PHOENIXDOWNII,PHOENIXDOWNIII,PHOENIXDOWNIV};
 enum KnightType
@@ -27,7 +25,7 @@ public:
     ~Events();
 
 private:
-    int *arr;
+    int *arr=NULL;
     int n;
 };
 class BaseKnight;
@@ -49,7 +47,7 @@ class Antidote:public BaseItem
     void use(BaseKnight *knight);
      Antidote()
      {
-        type=ANTIDOTE;
+       this-> type=ANTIDOTE;
      }
 };
 class PhoenixdownI :public BaseItem
@@ -59,7 +57,7 @@ class PhoenixdownI :public BaseItem
     void use(BaseKnight *knight);
     PhoenixdownI()
     {
-        type=PHOENIXDOWNI;
+       this-> type=PHOENIXDOWNI;
     }
 };
 class PhoenixdownII :public BaseItem
@@ -69,7 +67,7 @@ class PhoenixdownII :public BaseItem
     void use(BaseKnight *knight);
     PhoenixdownII()
     {
-        type=PHOENIXDOWNII;
+       this-> type=PHOENIXDOWNII;
     }
 };
 class PhoenixdownIII :public BaseItem
@@ -79,7 +77,7 @@ class PhoenixdownIII :public BaseItem
     void use(BaseKnight *knight);
     PhoenixdownIII()
     {
-        type=PHOENIXDOWNIII;
+       this-> type=PHOENIXDOWNIII;
     }
 };
 class PhoenixdownIV :public BaseItem
@@ -89,27 +87,26 @@ class PhoenixdownIV :public BaseItem
     void use(BaseKnight *knight);
     PhoenixdownIV()
     {
-        type=PHOENIXDOWNIV;
+       this-> type=PHOENIXDOWNIV;
     }
 };
 class BaseBag
 {
-protected:
-    BaseItem*item;
-    BaseBag*next;
-    int size;
 public:
-    BaseBag*getnext();
-    BaseItem*getitem();
-    void popFront(BaseBag**head);
-    void swap(BaseBag**head,int vitri);
-    int getSoluongItem(BaseBag*head);
-    void nhat_item(BaseBag**head,BaseItem*item);
-    BaseBag*makeItem(BaseItem*take_item);   //tao phan tu
-    virtual bool insertFirst(BaseItem *item,BaseKnight*knight);
+    BaseItem*item=NULL;
+    BaseBag*next=NULL;
+    static BaseBag*create(KnightType type);
+    BaseBag();
     virtual BaseItem *get(ItemType itemType,BaseBag*Bag);
-    virtual string toString(BaseBag*bag) const;
+    // virtual string toString(BaseBag*bag) const;
+    //insertfirst
 };
+// CAC SETUP CHO NODE
+BaseBag*makeNode(BaseItem*item);
+void swap(BaseBag**head,int vitri);
+void popFront(BaseBag**head);
+int getSoluongItem(BaseBag*head);
+void nhat_item(BaseBag**head,BaseItem*item);
 class BaseKnight
 {
 protected:
@@ -123,13 +120,18 @@ protected:
     BaseBag *bag=NULL;       //tui do
     KnightType knightType;
     bool poison=0;
+    int sizebag;
 public:
+   virtual bool insertFirst(BaseItem*item);
+    static bool is_Lancelot(int maxhp);
+    static bool is_Dragon(int maxhp);
+    static bool is_Paladin(int maxhp);
     BaseBag**getdiachibag();
     int getAntidote();
     void setAntidote(int anti);
     int getPhoenixI();
     void setPhoenixI(int phoenix);
-    void setbag(BaseBag*tmp);
+    void setbag();
     void tim_do(BaseKnight*knight);
     BaseBag* getbag();
     KnightType getknighttype();
@@ -145,33 +147,33 @@ public:
     int getlevel();
     void setknighttype(KnightType type);
     string toString() const;
+    string ToString(BaseBag*bag) const;
     static BaseKnight *create(int id, int maxhp, int level, int gil, int antidote, int phoenixdownI);
+    ~BaseKnight();
 };
-
 class BagPaladin:public BaseBag
 {
 public:
     // BagPaladin();
-    BagPaladin(BaseKnight*knight,int phoenidownI,int antidote);
+    // BagPaladin(int phoenixdownI,int antidote);
 };
 class BagLancelot:public BaseBag
 {
 public:
     // BagLancelot();
-    BagLancelot(BaseKnight*knight,int phoenidownI,int antidote);
+    // BagLancelot(int phoenixdownI,int antidote);
 };
 class BagDragon:public BaseBag
 {
 public:
-    bool insertFirst(BaseItem *item,BaseKnight*knight);
     // BagDragon();
-    BagDragon(BaseKnight*knight,int phoenidownI,int antidote);
+    // BagDragon(int phoenixdownI,int antidote);
 };
 class BagNormal:public BaseBag
 {
 public:
     // BagNormal();
-    BagNormal(BaseKnight*knight,int phoenidownI,int antidote);
+    // BagNormal(int phoenixdownI,int antidote);
 };
 
 class BaseOpponent
@@ -236,88 +238,59 @@ class OmegaWeapon :public BaseOpponent
 {
     public:
     void fight(BaseKnight*knight);
+    OmegaWeapon();
 };
 class Hades :public BaseOpponent
 {
 public:
     void fight(BaseKnight*knight);
-
+    Hades();
 };
 
-class ParadinKnight : public BaseKnight
+class PaladinKnight : public BaseKnight
 {
 public:
-    // ParadinKnight();
-    ParadinKnight(int i, int max, int le, int gi, int anti, int pho)
-    {
-        id = i;
-        maxhp = max;
-        level = le;
-        gil = gi;
-        antidote = anti;
-        phoenixdownI = pho;
-        knightType=PALADIN;
-    }
+    // PaladinKnight();
+    // BaseBag*makeItem(BaseItem*take_item);
+    PaladinKnight(int i, int max, int le, int gi, int anti, int pho);
 };
 class LancelotKnight : public BaseKnight
 {
 public:
     // LancelotKnight();
-    LancelotKnight(int i, int max, int le, int gi, int anti, int pho)
-    {
-        id = i;
-        maxhp = max;
-        level = le;
-        gil = gi;
-        antidote = anti;
-        phoenixdownI = pho;
-        knightType=LANCELOT;
-    }
+    // BaseBag*makeItem(BaseItem*take_item);
+    LancelotKnight(int i, int max, int le, int gi, int anti, int pho);
 };
 class DragonKnight : public BaseKnight
 {
 public:
     // DragonKnight();
-    DragonKnight(int i, int max, int le, int gi, int anti, int pho)
-    {
-
-        id = i;
-        maxhp = max;
-        level = le;
-        gil = gi;
-        antidote = anti;
-        phoenixdownI = pho;
-        knightType=DRAGON;
-    }
+    // bool insertFirst(BaseItem*item);
+    // BaseBag*makeItem(BaseItem*take_item);
+    bool insertFirst(BaseItem*item);
+    DragonKnight(int i, int max, int le, int gi, int anti, int pho);
 };
 class NormalKnight : public BaseKnight
 {
 public:
     // NormalKnight();
-    NormalKnight(int i, int max, int le, int gi, int anti, int pho)
-    {
-        id = i;
-        maxhp = max;
-        level = le;
-        gil = gi;
-        antidote = anti;
-        phoenixdownI = pho;
-        knightType=NORMAL;
-    }
+    // BaseBag*makeItem(BaseItem*take_item);
+    NormalKnight(int i, int max, int le, int gi, int anti, int pho);
+   
 };
 
 class ArmyKnights
 {
 private:
-    bool winBoss=0;
-    bool winOmegaWeapon=0;
-    bool winhades=0;
-    BaseKnight **quandoi;
+    bool winBoss;
+    bool winOmegaWeapon;
+    bool winhades;
+    BaseKnight **quandoi=NULL;
     int n;
-    bool paladinshield=0;
-    bool lancelotspear=0;
-    bool guineverehair=0;
-    bool excaliburSword=0;
+    bool paladinshield;
+    bool lancelotspear;
+    bool guineverehair;
+    bool excaliburSword;
 public:
     void fightUltimecia();
     void take_item(BaseKnight*knight,BaseItem*item);
@@ -335,8 +308,6 @@ public:
     void printInfo() const;
     void printResult(bool win) const;
 };
-
-
 
 class KnightAdventure
 {
