@@ -1,45 +1,14 @@
 #include "knight2.h"
-bool is_Paladin(int maxhp)
-{
-    if (maxhp < 1)
-        return 0;
-    int count = 0;
-    for (int i = 0; i <= sqrt(maxhp); i++)
-    {
-        if (maxhp % i == 0)
-            count++;
-    }
-    if (count == 1)
-        return 1;
-    return 0;
-}
-bool is_Lancelot(int maxhp)
-{
-    if (maxhp == 888)
-        {return 1;}
-    return 0;
-}
-bool is_Dragon(int maxhp)
-{
-    int a = maxhp % 10;
-    maxhp /= 10;
-    int b = maxhp % 10;
-    maxhp /= 10;
-    int c = maxhp % 10;
-    maxhp /= 10;
-    if (a * a + b * b == c * c || a * a + c * c == b * b || b * b + c * c == a * a)
-        {return 1;}
-    return 0;
-}
 
 /* * * BEGIN implementation of class Events * * */
 Events::Events(const string &file_events)
 {
     ifstream file(file_events);
     file >> n;
+    arr=new int[n];
     for (int i = 0; i < n; i++)
     {
-        cin >> arr[i];
+        file>> arr[i];
     }
     file.close();
 }
@@ -63,184 +32,17 @@ BaseBag**BaseKnight::getdiachibag()
 {
     return &bag;
 }
-BaseBag*BaseBag::getnext()
-{
-    return next;
-}
-BaseItem* BaseBag::getitem()
-{
-    return item;
-}
-string BaseBag::toString(BaseBag*bag) const
-{
-// BaseBag*tmp=bag;
-string nameItem[5]={"Antidote","PhoenixI","PhoenixII","PhoenixIII","PhoenixIV"};
-string str("");
-str+="Bag[count="+to_string(bag->getSoluongItem(bag))+";"+nameItem[bag->item->getTypeItem()];
-while(bag->next!=NULL)
-{
-    bag=bag->next;
-    str+=","+nameItem[bag->item->getTypeItem()];
-}
-str+="]";
-return str;
-}
-void BaseBag::popFront(BaseBag**head)
-{
-    if((*head)==NULL) return;
-    BaseBag*del=(*head);
-    (*head)=(*head)->next;
-    delete del;
-    
-}
-void BaseBag:: swap(BaseBag**head,int vitri)
-{
-    BaseBag*tmp=(*head);
-    for (int i = 1; i <= vitri-1; i++)
-    {
-        tmp=tmp->next;
-    }
-    BaseItem*trunggian=(*head)->item;
-    (*head)->item=tmp->item;
-    tmp->item=trunggian;
-    
-}
- int BaseBag::getSoluongItem(BaseBag*head)
-{
-    int count=0;
-    while(head!=NULL)
-    {
-        count++;
-        head=head->next;
-    }
-    return count;
-}
-void BaseBag::nhat_item(BaseBag**head,BaseItem* item)
-{
-    BaseBag*newItem=makeItem(item);
-    newItem->next=(*head);
-    (*head)=newItem;
-}
-BaseBag* BaseBag::makeItem(BaseItem* take_item)
-{
-    BaseBag*newitem=new BaseBag();
-    newitem->item=take_item;
-    newitem->next=NULL;
-    return newitem;
-}
-bool BaseBag::insertFirst(BaseItem*item,BaseKnight*knight)
-{
-    if(knight->getbag()->getSoluongItem(knight->getbag()) >=size) return 0;
-    else if(item->getTypeItem()==ANTIDOTE&&knight->getAntidote()>=5)return 0;
-    else if(item->getTypeItem()==PHOENIXDOWNI&&knight->getPhoenixI()>=5) return 0;
-    return 1;
-}
-bool BagDragon::insertFirst(BaseItem*item,BaseKnight*knight)
-{
-    if(item->getTypeItem()==ANTIDOTE)return 0;
-    else if(knight->getbag()->getSoluongItem(knight->getbag())>=size) return 0;
-    else if(knight->getPhoenixI()>=5) return 0;
-    return 1;
-}
+
 BaseItem* BaseBag::get(ItemType itemType,BaseBag*bag)
 {
     if(bag->item->getTypeItem()==itemType) return bag->item;
-    return NULL;
+    return nullptr;
     //nếu đối tượng đầu danh sách cùng kiểu với itemtype thì tra về cái đó không thì return null
 }
-BagPaladin:: BagPaladin(BaseKnight*knight,int phoenixdowI,int antidote)
+BaseBag::BaseBag()
 {
-    size=9999;
-    BaseItem*item=nullptr;
-    for (int i = 0; i < phoenixdowI; i++)
-    {
-        item= item->create(PHOENIXDOWNI);
-        // item->setItemType(PHOENIXDOWNI);
-        if(knight->getbag()->insertFirst(item,knight)==1)
-        {
-        nhat_item(knight->getdiachibag(),item);
-        }
-    }
-    for (int i = 0; i < antidote; i++)
-    {
-        item=item->create(ANTIDOTE);
-        // item->setItemType(ANTIDOTE);
-         if(knight->getbag()->insertFirst(item,knight)==1)
-        {
-        nhat_item(knight->getdiachibag(),item);
-        }
-    }
+    this->next=NULL;
 }
-BagLancelot:: BagLancelot(BaseKnight*knight,int phoenixdowI,int antidote)
-{
-    size=16;
-    BaseItem*item=nullptr;
-    for (int i = 0; i < phoenixdowI; i++)
-    {
-        item= item->create(PHOENIXDOWNI);
-        // item->setItemType(PHOENIXDOWNI);
-        if(knight->getbag()->insertFirst(item,knight)==1)
-        {
-        nhat_item(knight->getdiachibag(),item);
-        }
-    }
-    for (int i = 0; i < antidote; i++)
-    {
-        item=item->create(ANTIDOTE);
-        // item->setItemType(ANTIDOTE);
-         if(knight->getbag()->insertFirst(item,knight)==1)
-        {
-        nhat_item(knight->getdiachibag(),item);
-        }
-    }
-}
-BagDragon:: BagDragon(BaseKnight*knight,int phoenixdowI,int antidote)
-{
-    size=14;
-     BaseItem*item=nullptr;
-    for (int i = 0; i < phoenixdowI; i++)
-    {
-        item= item->create(PHOENIXDOWNI);
-        // item->setItemType(PHOENIXDOWNI);
-        if(knight->getbag()->insertFirst(item,knight)==1)
-        {
-        nhat_item(knight->getdiachibag(),item);
-        }
-    }
-    for (int i = 0; i < antidote; i++)
-    {
-        item=item->create(ANTIDOTE);
-        // item->setItemType(ANTIDOTE);
-         if(knight->getbag()->insertFirst(item,knight)==1)
-        {
-        nhat_item(knight->getdiachibag(),item);
-        }
-    }
-}
-BagNormal:: BagNormal(BaseKnight*knight,int phoenixdowI,int antidote)
-{
-    size=19;
-     BaseItem*item=nullptr;
-   for (int i = 0; i < phoenixdowI; i++)
-    {
-        item= item->create(PHOENIXDOWNI);
-        // item->setItemType(PHOENIXDOWNI);
-        if(knight->getbag()->insertFirst(item,knight)==1)
-        {
-        nhat_item(knight->getdiachibag(),item);
-        }
-    }
-    for (int i = 0; i < antidote; i++)
-    {
-        item=item->create(ANTIDOTE);
-        // item->setItemType(ANTIDOTE);
-         if(knight->getbag()->insertFirst(item,knight)==1)
-        {
-        nhat_item(knight->getdiachibag(),item);
-        }
-    }
-}
-
 /* * * END implementation of class BaseBag * * */
 
 /* * * BEGIN implementation of class BaseItem * * */
@@ -285,7 +87,7 @@ BaseItem* BaseItem::create(ItemType type)
         // newItem->setItemType(type);
         return new PhoenixdownIV();
     }
-    return NULL;
+    return nullptr;
 }
 bool Antidote::canUse(BaseKnight *knight)
 {
@@ -337,6 +139,58 @@ void PhoenixdownIV::use(BaseKnight *knight)
 /* * * END implementation of class BaseItem * * */
 
 /* * * BEGIN implementation of class BaseKnight * * */
+BaseKnight::~BaseKnight()
+{
+    int n=getSoluongItem(bag);
+    for (int i = 0; i < n; i++)
+    {
+        popFront(&bag);
+    }
+}
+BaseBag*makeNode(BaseItem*item)
+{
+    BaseBag*tmp=new BaseBag();
+    tmp->item=item;
+    tmp->next=NULL;
+    return tmp;
+}
+void popFront(BaseBag**head)
+{
+    if((*head)==NULL) return;
+    BaseBag*del=(*head);
+    (*head)=(*head)->next;
+    delete del;
+    
+}
+void swap(BaseBag**head,int vitri)
+{
+    BaseBag*tmp=(*head);
+    for (int i = 1; i <= vitri-1; i++)
+    {
+        tmp=tmp->next;
+    }
+    BaseItem*trunggian=(*head)->item;
+    (*head)->item=tmp->item;
+    tmp->item=trunggian;
+}
+ int getSoluongItem(BaseBag*head)
+{
+    int count=0;
+    while(head!=NULL)
+    {
+        count=count+1;
+        head=head->next;
+    }
+    return count;
+}
+
+void nhat_item(BaseBag**head,BaseItem* item)
+{
+    BaseBag*newItem=makeNode(item);
+    newItem->next=(*head);
+    (*head)=newItem;
+}
+
 
 void BaseKnight::setPhoenixI(int phoenix)
 {
@@ -361,23 +215,23 @@ BaseBag* BaseKnight::getbag()
 }
 void BaseKnight::tim_do(BaseKnight*knight)
 {
-    BaseBag*tmp=knight->bag;
+    BaseBag*tmp=bag;
     int i=0;
     while(tmp!=NULL){
         i++;
-        if(tmp->getitem()->canUse(knight)==1)
+        if(tmp->item->canUse(knight)==1)
         {
-            tmp->swap(knight->getdiachibag(),i);
-            knight->bag->getitem()->use(knight);
-            knight->bag->popFront(knight->getdiachibag());
+            swap(&bag,i);
+            bag->item->use(knight);
+            popFront(&bag);
             break;
         }
-        tmp=tmp->getnext();
+        tmp=tmp->next;
     }
 }
-void BaseKnight::setbag(BaseBag*tmp)
+void BaseKnight::setbag()
 {
-    bag=tmp;
+    this->bag=nullptr;
 }
 KnightType BaseKnight::getknighttype()
 {
@@ -416,42 +270,109 @@ void BaseKnight::giai_doc(){
 int BaseKnight::getlevel(){
     return level;
 }
+bool BaseKnight:: insertFirst(BaseItem*item)
+{
+    if(getSoluongItem(bag) >=sizebag) return 0;
+    else if(item->getTypeItem()==ANTIDOTE&&antidote>=5)return 0;
+    else if(item->getTypeItem()==PHOENIXDOWNI&&phoenixdownI>=5) return 0;
+    return 1;
+}
+bool DragonKnight::insertFirst(BaseItem*item)
+{
+        if(item->getTypeItem()==ANTIDOTE)return 0;
+    else if(getSoluongItem(bag)>=sizebag) return 0;
+    else if(phoenixdownI>=5) return 0;
+    return 1;
+}
 void BaseKnight::setlevel(int le)
 {
     level=le;
 }
-
-BaseKnight *BaseKnight::create(int id, int maxhp, int level, int gil, int antidote, int phoenixdownI)
+bool BaseKnight::is_Dragon(int maxhp)
 {
-   static BaseKnight *newKnight = nullptr;
-    bool paradin = is_Paladin(maxhp);
-    bool lancelot = is_Lancelot(maxhp);
-    bool dragon = is_Dragon(maxhp);
-    if (paradin)
+    int a = maxhp % 10;
+    maxhp /= 10;
+    int b = maxhp % 10;
+    maxhp /= 10;
+    int c = maxhp % 10;
+    maxhp /= 10;
+    if (a * a + b * b == c * c || a * a + c * c == b * b || b * b + c * c == a * a) return 1;
+    return 0;
+}
+bool BaseKnight::is_Lancelot(int maxhp)
+{
+if (maxhp == 888) return 1;
+     return 0;
+}
+bool BaseKnight::is_Paladin(int maxhp)
+{
+    if (maxhp < 2) return 0;
+    int count = 0;
+    for (int i = 2; i <= sqrt(maxhp); i++){
+        if(maxhp%i==0) 
+        {
+            count++;
+            break;
+        }
+    }
+    if (count != 0)return 0;
+    return 1;
+}
+BaseKnight* BaseKnight::create(int id, int maxhp, int level, int gil, int antidote, int phoenixdownI)
+{
+    // BaseKnight*newKnight=nullptr;
+     // return new NormalKnight(id, maxhp, level, gil, antidote, phoenixdownI);
+     if(gil>999) gil=999;
+     if(antidote>5)antidote=5;
+     if(phoenixdownI>5)phoenixdownI=5;
+    if (is_Paladin(maxhp)==1)
     {
-        newKnight = new ParadinKnight(id, maxhp, level, gil, antidote, phoenixdownI);
+        return  new PaladinKnight(id, maxhp, level, gil, antidote, phoenixdownI);
         // newKnight->setknighttype(PALADIN);
-        newKnight->bag=new BagPaladin(newKnight,phoenixdownI,antidote);
+        //  newKnight->bag=new BagPaladin(newKnight,phoenixdownI,antidote);
     }
-    else if (lancelot)
+   else  if (is_Lancelot(maxhp)==1)
     {
-        newKnight = new LancelotKnight(id, maxhp, level, gil, antidote, phoenixdownI);
+        return new LancelotKnight(id, maxhp, level, gil, antidote, phoenixdownI);
         // newKnight->setknighttype(LANCELOT);
-        newKnight->bag=new BagLancelot(newKnight,phoenixdownI,antidote);
+        //  newKnight->bag=new BagLancelot(newKnight,phoenixdownI,antidote);
     }
-    else if (dragon)
+    else if (is_Dragon(maxhp)==1)
     {
-        newKnight = new DragonKnight(id, maxhp, level, gil, antidote, phoenixdownI);
+        return new DragonKnight(id, maxhp, level, gil, antidote, phoenixdownI);
         // newKnight->setknighttype(DRAGON);
-        newKnight->bag=new BagDragon(newKnight,phoenixdownI,antidote);
+        //  newKnight->bag=new BagDragon(newKnight,phoenixdownI,antidote);
     }
     else
     {
-        newKnight = new NormalKnight(id, maxhp, level, gil, antidote, phoenixdownI);
+        return new NormalKnight(id, maxhp, level, gil, antidote, phoenixdownI);
         // newKnight->setknighttype(NORMAL);
-        newKnight->bag=new BagNormal(newKnight,phoenixdownI,antidote);
+        // if(newKnight->bag==nullptr)cout<<"rong";
+        //  newKnight->bag=new BagNormal(newKnight,phoenixdownI,antidote);
+         
     }
-    return newKnight;
+     return nullptr;
+}
+string BaseKnight::ToString(BaseBag*bag) const
+{
+    string nameItem[5]={"Antidote","PhoenixI","PhoenixII","PhoenixIII","PhoenixIV"};
+string str("");
+        //LOI PHAN TUI
+if(getSoluongItem(bag)==0) str=str+"Bag[count=0;]";
+else
+{
+str=str+"Bag[count="
++to_string(getSoluongItem(bag))
++";"
++nameItem[bag->item->getTypeItem()];
+while(bag->next!=nullptr)
+{
+    bag=bag->next;
+    str+=","+nameItem[bag->item->getTypeItem()];
+}
+str+="]";
+}
+return str;
 }
 string BaseKnight::toString() const
 {
@@ -459,40 +380,155 @@ string BaseKnight::toString() const
     // inefficient version, students can change these code
     //      but the format output must be the same
     string s("");
-    s += "[Knight:id:" + to_string(id) + ",hp:" + to_string(hp) + ",maxhp:" + to_string(maxhp) + ",level:" + to_string(level) + ",gil:" + to_string(gil) + "," + bag->toString(bag) + ",knight_type:" + typeString[knightType] + "]";
+    // cout<<hp;
+    // cout<<to_string(hp);
+    s += "[Knight:id:" + to_string(id) + ",hp:" + to_string(hp) + ",maxhp:" 
+    + to_string(maxhp) + ",level:" 
+    + to_string(level) 
+    + ",gil:" + to_string(gil) 
+    + "," +ToString(bag) 
+    + ",knight_type:" 
+    + typeString[knightType] + "]";
     return s;
 }
 void BaseKnight::setknighttype(KnightType type)
 {
         knightType = type;
 }
+PaladinKnight::PaladinKnight(int i,int max,int le,int gi,int anti,int pho)
+{
+    this->id=i;
+    this->maxhp=max;
+    this->hp=max;
+    this->level=le;
+    this->gil=gi;
+    this->antidote=anti;
+    this->phoenixdownI=pho;
+    this->knightType=PALADIN;
+    this->sizebag=9999;
+    this->bag=NULL;
+    BaseItem*phoenixI=new PhoenixdownI();
+    for (int i = 0; i < pho; i++)
+    {
+        nhat_item(&bag,phoenixI);
+    }
+    BaseItem*antidote=new Antidote();
+    for (int i = 0; i < anti; i++)
+    {
+        nhat_item(&bag,antidote);
+    }
+}
+LancelotKnight::LancelotKnight(int i,int max,int le,int gi,int anti,int pho)
+{
+    this->id=i;
+    this->maxhp=max;
+    this->hp=max;
+    this->level=le;
+    this->gil=gi;
+    this->antidote=anti;
+    this->phoenixdownI=pho;
+    this->knightType=LANCELOT;
+    this->sizebag=16;
+    this->bag=NULL;
+    BaseItem*phoenixI=new PhoenixdownI();
+    for (int i = 0; i < pho; i++)
+    {
+        nhat_item(&bag,phoenixI);
+    }
+    BaseItem*antidote=new Antidote();
+    for (int i = 0; i < anti; i++)
+    {
+        nhat_item(&bag,antidote);
+    }
+}
+DragonKnight::DragonKnight(int i,int max,int le,int gi,int anti,int pho)
+{
+    this->id=i;
+    this->maxhp=max;
+    this->hp=max;
+    this->level=le;
+    this->gil=gi;
+    this->antidote=0;
+    this->phoenixdownI=pho;
+    this->knightType=DRAGON;
+    this->sizebag=14;
+    this->bag=NULL;
+    BaseItem*phoenixI=new PhoenixdownI();
+    for (int i = 0; i < pho; i++)
+    {
+        nhat_item(&bag,phoenixI);
+    }
+    // BaseItem*antidote=new Antidote();
+    // for (int i = 0; i < anti; i++)
+    // {
+    //     nhat_item(&bag,antidote);
+    // }
+}
+NormalKnight::NormalKnight(int i,int max,int le,int gi,int anti,int pho)
+{
+    this->id=i;
+    this->maxhp=max;
+    this->hp=max;
+    this->level=le;
+    this->gil=gi;
+    this->antidote=anti;
+    this->phoenixdownI=pho;
+    this->knightType=NORMAL;
+    this->sizebag=19;
+    this->bag=NULL;
+    BaseItem*phoenixI=new PhoenixdownI();
+    for (int i = 0; i < pho; i++)
+    {
+        nhat_item(&bag,phoenixI);
+    }
+    BaseItem*antidote=new Antidote();
+    for (int i = 0; i < anti; i++)
+    {
+        nhat_item(&bag,antidote);
+    }
+}
 /* * * END implementation of class BaseKnight * * */
 
 /* * * BEGIN implementation of class BaseOpponent * * */
 MadBear::MadBear()
 {
-    gil=100;
-    baseDamage=10;
+   this-> gil=100;
+   this-> baseDamage=10;
+   this-> winOmegaWeapon=0;
+   this->winHades=0;
 }
 Bandit::Bandit()
 {
-    gil=150;
-    baseDamage=15;
+   this-> gil=150;
+   this-> baseDamage=15;
+   this-> winOmegaWeapon=0;
+   this->winHades=0;
 }
 LordLupin::LordLupin()
 {
-    gil=450;
-    baseDamage=45;
+   this-> gil=450;
+   this-> baseDamage=45;
+   this-> winOmegaWeapon=0;
+   this->winHades=0;
 }
 Elf::Elf()
 {
-    gil=750;
-    baseDamage=75;
+   this-> gil=750;
+   this-> baseDamage=75;
+   this-> winOmegaWeapon=0;
+   this->winHades=0;
 }
 Troll::Troll()
 {
-    gil=800;
-    baseDamage=95;
+   this-> gil=800;
+   this-> baseDamage=95;
+   this-> winOmegaWeapon=0;
+   this->winHades=0;
+}
+Hades::Hades()
+{
+   this-> winOmegaWeapon=0;
+   this->winHades=0;
 }
 void Hades::fight(BaseKnight*knight)
 {
@@ -511,6 +547,11 @@ void Hades::fight(BaseKnight*knight)
                 knight->sethp(knight->getmaxhp()/2);
         }
     }
+}
+OmegaWeapon::OmegaWeapon()
+{
+   this-> winOmegaWeapon=0;
+   this->winHades=0;
 }
 void OmegaWeapon::fight(BaseKnight*knight)
 {
@@ -539,24 +580,24 @@ void Tornbery::fight(BaseKnight*knight)
 {
     if(knight->getlevel()<level)
     {
-        if(knight->getknighttype()!=DRAGON)
+        if (knight->getknighttype() != DRAGON)
         {
-        knight->trung_doc();
-        knight->tim_do(knight);
-        if(knight->hasPoison()==1)
-        {
-            knight->sethp(knight->gethp()-10);
-            for (int i = 0; i < 3; i++)
-            {
-               knight->getbag()->popFront(knight->getdiachibag());
-            }
-            knight->tim_do(knight);
-            if(knight->gethp()<=0&&knight->getgil()>=100)
-            {
-                knight->setgil(knight->getgil()-100);
-                knight->sethp(knight->getmaxhp()/2);
-            }
-        }
+                knight->trung_doc();
+                knight->tim_do(knight);
+                if (knight->hasPoison() == 1)
+                {
+                    knight->sethp(knight->gethp() - 10);
+                    for (int i = 0; i < 3; i++)
+                    {
+                        popFront(knight->getdiachibag());
+                    }
+                    knight->tim_do(knight);
+                    if (knight->gethp() <= 0 && knight->getgil() >= 100)
+                    {
+                        knight->setgil(knight->getgil() - 100);
+                        knight->sethp(knight->getmaxhp() / 2);
+                    }
+                }
         }
         //luc tui do de giai doc
         //neu khong giai doc duoc
@@ -607,11 +648,11 @@ void BaseOpponent::fight(BaseKnight*knight)
     {
         knight->setgil(knight->getgil() + gil);
         // hien thuc ham chuyen tien len tren
-        knight->setlevel(knight->getlevel() + 1);
+        // knight->setlevel(knight->getlevel() + 1);
     }
    else
     {
-        knight->sethp(knight->gethp() - baseDamage * (knight->getlevel() - level));
+        knight->sethp(knight->gethp() - baseDamage * (level-knight->getlevel()));
         knight->tim_do(knight);
         if(knight->gethp()<=0&&knight->getgil()>=100)
         {
@@ -633,7 +674,7 @@ BaseOpponent* BaseOpponent::create(int eventid)
     else if(eventid==9) return new DurianGarden();
     else if(eventid==10) return new OmegaWeapon();
     else if(eventid==11) return new Hades();
-    return NULL;
+    return nullptr;
 }
 void BaseOpponent::set_info(int i,int eventid)
 {
@@ -645,14 +686,13 @@ void BaseOpponent::set_info(int i,int eventid)
 void ArmyKnights::take_item(BaseKnight*knight,BaseItem*item)
 {
     int i=n;
-    while(quandoi[i]->getbag()->insertFirst(item,knight)==0)
+    while(quandoi[i]->insertFirst(item)==0)
     {
-        
         i--;
     }
-    if(quandoi[i]->getbag()->insertFirst(item,knight)==1)
+    if(quandoi[i]->insertFirst(item)==1)
     {
-        quandoi[i]->getbag()->nhat_item(knight->getdiachibag(),item);
+        nhat_item(quandoi[i]->getdiachibag(),item);
     }
 }
 ArmyKnights ::ArmyKnights(const string &file_armyknights)
@@ -665,10 +705,21 @@ ArmyKnights ::ArmyKnights(const string &file_armyknights)
     int phoenixdownI;
     int gil;
     int antidote;
+    winhades=0;
+    winBoss=0;
+    winOmegaWeapon=0;
+    paladinshield=0;
+    lancelotspear=0;
+    guineverehair=0;
+    excaliburSword=0;
+    //  file >> hp >> level >> phoenixdownI >> gil >> antidote;
+    //  BaseKnight*knight=BaseKnight::create(1,hp,level,gil,antidote,phoenixdownI);
+    // BaseKnight*knight=new NormalKnight(1,hp,level,gil,antidote,phoenixdownI);
+    // cout<<knight->gethp();
     for (int i = 1; i <= n; i++)
     {
         file >> hp >> level >> phoenixdownI >> gil >> antidote;
-        quandoi[i] = quandoi[i]->create(i, hp, level, gil, antidote, phoenixdownI);
+        quandoi[i] = BaseKnight::create(i, hp, level, gil, antidote, phoenixdownI);
     }
     file.close();
 }
@@ -676,13 +727,17 @@ ArmyKnights::~ArmyKnights()
 {
     for (int i = 0; i < n + 1; i++)
     {
-        delete[] quandoi[i];
+        delete quandoi[i];
     }
-    delete[] quandoi;
+    delete quandoi;
 }
 //  return false neu hiep si cuoi chet
 void ArmyKnights::fightUltimecia()
 {
+    if(hasExcaliburSword()==1){
+        this->winBoss=1;
+        return;
+    }
     int hpBoss=5000;
     for (int i = n; i >=1 ; i--){
         switch (quandoi[i]->getknighttype())
@@ -709,27 +764,43 @@ void ArmyKnights::fightUltimecia()
         }
     }
     if(hpBoss<=0&&n>0) winBoss=1;
-    else n=0;
+    else n=0;   winBoss=0;
 }
 bool ArmyKnights::fight(BaseOpponent*opponent)  //nhung thay doi cua mang doi quan se viet tren ham nay 
 {
-    if(lastKnight()==NULL) return false;
+    if(lastKnight()==nullptr) return false;
     opponent->fight(quandoi[n]);
     while(quandoi[n]->gethp()<=0)
     {
         delete quandoi[n];
         n--;
+        if(n==0)
+        {
+            return false;
+            break;
+        }
         opponent->fight(quandoi[n]);
     }
     if(quandoi[n]->getlevel()>10) quandoi[n]->setlevel(10);
     int i=n;
-    do
+    while(quandoi[i]->getgil()>999)
     {
+        if(i==1)
+        {
+            quandoi[i]->setgil(999);
+            break;
+        }
+        quandoi[i-1]->setgil(quandoi[i]->getgil()-999+quandoi[i-1]->getgil());
+        quandoi[i]->setgil(999);
         i--;
-        quandoi[i]->setgil(quandoi[i+1]->getgil()-999+quandoi[i]->getgil());
+    }
+    // do
+    // {
+    //     i--;
+    //     quandoi[i]->setgil(quandoi[i+1]->getgil()-999+quandoi[i]->getgil());
 
-    } while (quandoi[i]->getgil()>999);
-    if(opponent->winHades)
+    // } while (quandoi[i]->getgil()>999);
+    if(opponent->winHades==1)
     {
         winhades=1;
         paladinshield=1;
@@ -743,11 +814,11 @@ bool ArmyKnights::fight(BaseOpponent*opponent)  //nhung thay doi cua mang doi qu
 //return true neu danh bai boss
 bool ArmyKnights::adventure(Events*events)  
 {
-    BaseOpponent*opponent=NULL;
+    BaseOpponent*opponent=nullptr;
     BaseItem*item=nullptr;
-
     for (int i = 0; i < events->count(); i++)
     {
+        // cout<<events->get(i);
         switch (events->get(i))
         {
         case 1:
@@ -761,6 +832,7 @@ bool ArmyKnights::adventure(Events*events)
         case 9:
             opponent= opponent->create(events->get(i));
             opponent->set_info(i,events->get(i));
+            // cout<<quandoi[n]->gethp();
             if(fight(opponent)==0) return false;
             break;
         case 10:
@@ -768,12 +840,14 @@ bool ArmyKnights::adventure(Events*events)
             opponent=opponent->create(events->get(i));
             opponent->set_info(i,events->get(i));
             if(fight(opponent)==0) return false;
+            winOmegaWeapon=opponent->winOmegaWeapon;
             break;
         case 11:
             if(winhades==1) break;
             opponent=opponent->create(events->get(i));
             opponent->set_info(i,events->get(i));
             if(fight(opponent)==0) return false;
+            winhades=opponent->winHades;
             break;
         case 112:
             item=item->create( PHOENIXDOWNII);
@@ -789,28 +863,31 @@ bool ArmyKnights::adventure(Events*events)
             break;
         case 95:
             if(hasPaladinShield()==1) break;
-            paladinshield=1;
+            this->paladinshield=1;
             break;
         case 96:
-            lancelotspear=1;
+           this-> lancelotspear=1;
             break;
         case 97:
-            guineverehair=1;
+           this-> guineverehair=1;
             break;
         case 98:
             if(hasGuinevereHair()&&hasPaladinShield()&&hasLancelotSpear())
             {
-                excaliburSword=1;
+               this-> excaliburSword=1;
             }
             break;
         case 99:
             fightUltimecia();
+            printInfo();
             if(winBoss==1) return true; 
+            else return false;
             break;
         default:
             break;
         }
-        printInfo();
+         printInfo();
+        
     }
     return false;
 }
@@ -821,6 +898,7 @@ int ArmyKnights::count() const //tra ve so luong knight
 void ArmyKnights::printInfo() const
 {
     cout << "No. knights: " << this->count();
+    // cout<<this->count()<<endl;
     if (this->count() > 0)
     {
         BaseKnight *lknight = lastKnight(); // last knight
@@ -840,7 +918,7 @@ void ArmyKnights::printResult(bool win) const
 BaseKnight *ArmyKnights::lastKnight() const
 {
     if(n>0) return quandoi[n];
-    return NULL;
+    return nullptr;
 }
 bool ArmyKnights::hasExcaliburSword() const{
     return excaliburSword;
@@ -879,6 +957,7 @@ void KnightAdventure::run()
 {
     armyKnights->adventure(events);
     armyKnights->printResult(armyKnights->win());
+    
 }
 KnightAdventure::~KnightAdventure()
 {
