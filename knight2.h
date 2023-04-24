@@ -18,19 +18,50 @@ enum KnightType
     NORMAL = 3
 };
 
+
 class BaseItem
 {
 protected:
-    ItemType itemType;
-    int quantity;
+    ItemType type;
 public:
     ItemType getTypeItem();
     void setItemType(ItemType type);
-    BaseItem*create(ItemType type);
     virtual bool canUse(BaseKnight *knight) = 0;
     virtual void use(BaseKnight *knight) = 0;
+   static BaseItem*create(ItemType type);
 };
-
+class Antidote:public BaseItem
+{
+    public:
+    bool canUse(BaseKnight *knight);
+    void use(BaseKnight *knight);
+    Antidote();
+};
+class PhoenixdownI :public BaseItem
+{
+    public:
+    bool canUse(BaseKnight *knight);
+    void use(BaseKnight *knight);
+    PhoenixdownI();
+};
+class PhoenixdownII :public BaseItem
+{
+    public:
+    bool canUse(BaseKnight *knight);
+    void use(BaseKnight *knight);
+};
+class PhoenixdownIII :public BaseItem
+{
+    public:
+    bool canUse(BaseKnight *knight);
+    void use(BaseKnight *knight);
+};
+class PhoenixdownIV :public BaseItem
+{
+    public:
+    bool canUse(BaseKnight *knight);
+    void use(BaseKnight *knight);
+};
 class BaseBag
 {
 public:
@@ -266,31 +297,6 @@ public:
 };
 
 
-class Antidote:public BaseItem
-{
-    bool canUse(BaseKnight *knight);
-    void use(BaseKnight *knight);
-};
-class PhoenixdownI :public BaseItem
-{
-    bool canUse(BaseKnight *knight);
-    void use(BaseKnight *knight);
-};
-class PhoenixdownII :public BaseItem
-{
-    bool canUse(BaseKnight *knight);
-    void use(BaseKnight *knight);
-};
-class PhoenixdownIII :public BaseItem
-{
-    bool canUse(BaseKnight *knight);
-    void use(BaseKnight *knight);
-};
-class PhoenixdownIV :public BaseItem
-{
-    bool canUse(BaseKnight *knight);
-    void use(BaseKnight *knight);
-};
 
 class Events
 {

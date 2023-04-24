@@ -139,12 +139,13 @@ BaseItem* BaseBag::get(ItemType itemType,BaseBag*bag)
 BagPaladin:: BagPaladin(BaseKnight*knight,int phoenixdowI,int antidote)
 {
     size=9999;
-    BaseItem*item;
+     BaseItem*item=nullptr;
     for (int i = 0; i < phoenixdowI; i++)
     {
         if(knight->bag->insertFirst(item)==1)
         {
-        item=new PhoenixdownI();
+        item->create(PHOENIXDOWNI);
+        item->setItemType(PHOENIXDOWNI);
         nhat_item(&knight->bag,item);
         knight->bag->set_soluongitem(knight->bag);
         }
@@ -153,7 +154,7 @@ BagPaladin:: BagPaladin(BaseKnight*knight,int phoenixdowI,int antidote)
     {
          if(knight->bag->insertFirst(item))
         {
-        item=new Antidote();
+        item->create(ANTIDOTE);
         nhat_item(&knight->bag,item);
         knight->bag->set_soluongitem(knight->bag);
         }
@@ -163,11 +164,12 @@ BagLancelot:: BagLancelot(BaseKnight*knight,int phoenixdowI,int antidote)
 {
     size=16;
     BaseItem*item;
-     for (int i = 0; i < phoenixdowI; i++)
+  for (int i = 0; i < phoenixdowI; i++)
     {
-        if(knight->bag->insertFirst(item))
+        if(knight->bag->insertFirst(item)==1)
         {
-        item=new PhoenixdownI();
+        item->create(PHOENIXDOWNI);
+        item->setItemType(PHOENIXDOWNI);
         nhat_item(&knight->bag,item);
         knight->bag->set_soluongitem(knight->bag);
         }
@@ -176,7 +178,7 @@ BagLancelot:: BagLancelot(BaseKnight*knight,int phoenixdowI,int antidote)
     {
          if(knight->bag->insertFirst(item))
         {
-        item=new Antidote();
+        item->create(ANTIDOTE);
         nhat_item(&knight->bag,item);
         knight->bag->set_soluongitem(knight->bag);
         }
@@ -186,11 +188,12 @@ BagDragon:: BagDragon(BaseKnight*knight,int phoenixdowI,int antidote)
 {
     size=14;
     BaseItem*item;
-     for (int i = 0; i < phoenixdowI; i++)
+    for (int i = 0; i < phoenixdowI; i++)
     {
-        if(knight->bag->insertFirst(item))
+        if(knight->bag->insertFirst(item)==1)
         {
-        item=new PhoenixdownI();
+        item->create(PHOENIXDOWNI);
+        item->setItemType(PHOENIXDOWNI);
         nhat_item(&knight->bag,item);
         knight->bag->set_soluongitem(knight->bag);
         }
@@ -199,7 +202,7 @@ BagDragon:: BagDragon(BaseKnight*knight,int phoenixdowI,int antidote)
     {
          if(knight->bag->insertFirst(item))
         {
-        item=new Antidote();
+        item->create(ANTIDOTE);
         nhat_item(&knight->bag,item);
         knight->bag->set_soluongitem(knight->bag);
         }
@@ -211,18 +214,19 @@ BagNormal:: BagNormal(BaseKnight*knight,int phoenixdowI,int antidote)
     BaseItem*item;
     for (int i = 0; i < phoenixdowI; i++)
     {
-        if(knight->bag->insertFirst(item))
+        if(knight->bag->insertFirst(item)==1)
         {
-        item=new PhoenixdownI();
+        item->create(PHOENIXDOWNI);
+        item->setItemType(PHOENIXDOWNI);
         nhat_item(&knight->bag,item);
-        knight->bag->set_soluongitem(bag);
+        knight->bag->set_soluongitem(knight->bag);
         }
     }
     for (int i = 0; i < antidote; i++)
     {
          if(knight->bag->insertFirst(item))
         {
-        item=new Antidote();
+        item->create(ANTIDOTE);
         nhat_item(&knight->bag,item);
         knight->bag->set_soluongitem(knight->bag);
         }
@@ -234,15 +238,15 @@ BagNormal:: BagNormal(BaseKnight*knight,int phoenixdowI,int antidote)
 /* * * BEGIN implementation of class BaseItem * * */
 ItemType BaseItem::getTypeItem()
 {
-    return itemType;
+    return type;
 }
 void BaseItem::setItemType(ItemType type)
 {
-    itemType=type;
+    this->type=type;
 }
 BaseItem* BaseItem::create(ItemType type)
 {
-    BaseItem* newItem=nullptr;
+    static BaseItem* newItem=nullptr;
     switch (type)
     {
     case ANTIDOTE:
@@ -276,7 +280,6 @@ bool Antidote::canUse(BaseKnight *knight)
 void Antidote::use(BaseKnight*knight)
 {
     knight->giai_doc();
-    quantity--;
 }
 bool PhoenixdownI::canUse(BaseKnight*knight)
 {
@@ -286,7 +289,6 @@ bool PhoenixdownI::canUse(BaseKnight*knight)
 void PhoenixdownI::use(BaseKnight*knight)
 {
     knight->sethp(knight->getmaxhp());
-    quantity--;
 }
 bool PhoenixdownII::canUse(BaseKnight*knight)
 {
@@ -296,7 +298,6 @@ bool PhoenixdownII::canUse(BaseKnight*knight)
 void PhoenixdownII::use(BaseKnight*knight)
 {
     knight->sethp(knight->getmaxhp());
-    quantity--;
 }
 bool PhoenixdownIII::canUse(BaseKnight*knight)
 {
@@ -307,7 +308,6 @@ void PhoenixdownIII::use(BaseKnight*knight)
 {
     if(knight->gethp()<=0) knight->sethp(knight->getmaxhp()/3);
     else knight->sethp(knight->gethp()+knight->getmaxhp()/4);
-    quantity--;
 }
 bool PhoenixdownIV::canUse(BaseKnight*knight)
 {
@@ -318,7 +318,6 @@ void PhoenixdownIV::use(BaseKnight *knight)
 {
     if(knight->gethp()<=0) knight->sethp(knight->getmaxhp()/2);
     else knight->sethp(knight->gethp()+knight->getmaxhp()/5);
-    quantity--;
 }
 /* * * END implementation of class BaseItem * * */
 
@@ -549,7 +548,7 @@ void BaseOpponent::fight(BaseKnight*knight)
 }
 BaseOpponent* BaseOpponent::create(int eventid)
 {
-    BaseOpponent*newopponent=NULL;
+   static BaseOpponent*newopponent=NULL;
     switch (eventid)
     {
     case 1:
@@ -684,22 +683,7 @@ bool ArmyKnights::hasLancelotSpear() const{
 bool ArmyKnights::hasGuinevereHair() const{
     return guineverehair;
 }
-// void ArmyKnights::tim_do(BaseKnight*knight)
-// {
-//     BaseBag*tmp=knight->bag;
-//     int i=0;
-//     while(tmp!=NULL){
-//         i++;
-//         if(tmp->getitem()->canUse(knight)==1)
-//         {
-//             tmp->swap(&knight->bag,i);
-//             knight->bag->getitem()->use(knight);
-//             knight->bag->popFront(&knight->bag);
-//             tmp=tmp->next;
-//         }
-//     }
-    
-// }
+
 /* * * END implementation of class ArmyKnights * * */
 
 /* * * BEGIN implementation of class KnightAdventure * * */
