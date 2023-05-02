@@ -137,6 +137,7 @@ public:
     KnightType getknighttype();
     void setgil(int gi);
     int getgil();
+    int getId();
     void sethp(int mau);
     int gethp();
     int getmaxhp();
@@ -287,6 +288,7 @@ private:
     bool winhades;
     BaseKnight **quandoi=NULL;
     int n;
+    int soluong;
     bool paladinshield;
     bool lancelotspear;
     bool guineverehair;

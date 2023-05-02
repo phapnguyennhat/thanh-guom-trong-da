@@ -243,6 +243,10 @@ void BaseKnight::setgil(int gi)
 {
     gil=gi;
 }
+int BaseKnight::getId()
+{
+    return id;
+}
 int BaseKnight::getgil()
 {
     return gil;
@@ -702,6 +706,7 @@ ArmyKnights ::ArmyKnights(const string &file_armyknights)
 {
     ifstream file(file_armyknights);
     file >> n;
+    soluong=n;
     quandoi = new BaseKnight *[n + 1];
     int hp;
     int level;
@@ -765,9 +770,18 @@ void ArmyKnights::fightUltimecia()
         default:
                 break;
         }
+        // cout<<hpBoss<<" ";
+        if (hpBoss <= 0 && n > 0)
+        {
+                winBoss = 1;
+                break;
+        }   
+        else{
+            n=0;
+            winBoss=0;
+        }
     }
-    if(hpBoss<=0&&n>0) winBoss=1;
-    else n=0;   winBoss=0;
+   
 }
 bool ArmyKnights::fight(BaseOpponent*opponent)  //nhung thay doi cua mang doi quan se viet tren ham nay 
 {
@@ -821,7 +835,7 @@ bool ArmyKnights::adventure(Events*events)
     BaseItem*item=nullptr;
     for (int i = 0; i < events->count(); i++)
     {
-        cout<<events->get(i);
+        // cout<<events->get(i);
         switch (events->get(i))
         {
         case 1:
@@ -920,7 +934,14 @@ void ArmyKnights::printResult(bool win) const
 }
 BaseKnight *ArmyKnights::lastKnight() const
 {
-    if(n>0) return quandoi[n];
+    if(n>0)
+    {
+        for (int i = soluong; i > 0; i--)
+        {
+            if(quandoi[i]->getId()<=soluong&&quandoi[i]->getId()>=1) return quandoi[i];
+        }
+        
+    }
     return nullptr;
 }
 bool ArmyKnights::hasExcaliburSword() const{
