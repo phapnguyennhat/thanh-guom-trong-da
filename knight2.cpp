@@ -751,37 +751,39 @@ void ArmyKnights::fightUltimecia()
         switch (quandoi[i]->getknighttype())
         {
         case NORMAL:
+                continue;
                 break;
         case LANCELOT:
             hpBoss=hpBoss-quandoi[i]->gethp()*quandoi[i]->getlevel()*0.05;
-            delete quandoi[i];
-            n--;
+           
             break;
         case PALADIN:
             hpBoss=hpBoss-quandoi[i]->gethp()*quandoi[i]->getlevel()*0.06;
-            delete quandoi[i];
-            n--;
+            
             break;
         case DRAGON:
             hpBoss=hpBoss-quandoi[i]->gethp()*quandoi[i]->getlevel()*0.075;
-            delete quandoi[i];
-            n--;
+            
             break;
         default:
                 break;
         }
-        // cout<<hpBoss<<" ";
         if (hpBoss <= 0 && n > 0)
         {
+                
                 winBoss = 1;
                 break;
         }   
         else{
-            n=0;
-            winBoss=0;
+           delete quandoi[i];
+                n--;
         }
     }
-   
+   if(hpBoss>0)
+   {
+    n=0;
+    winBoss=0;
+   }
 }
 bool ArmyKnights::fight(BaseOpponent*opponent)  //nhung thay doi cua mang doi quan se viet tren ham nay 
 {
