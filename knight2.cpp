@@ -97,7 +97,7 @@ bool Antidote::canUse(BaseKnight *knight)
 void Antidote::use(BaseKnight*knight)
 {
     knight->giai_doc();
-    // cout<<"giai doc ne";
+    cout<<"giai doc ne";
 }
 bool PhoenixdownI::canUse(BaseKnight*knight)
 {
@@ -222,7 +222,7 @@ void BaseKnight::tim_do(BaseKnight*knight)
         i++;
         if(tmp->item->canUse(knight)==1)
         {
-           
+           cout<<tmp->item->getTypeItem();
             swap(&bag,i);
             bag->item->use(knight);
             popFront(&bag);
@@ -268,10 +268,10 @@ bool BaseKnight::hasPoison()
     return poison;
 }
 void BaseKnight::trung_doc(){
-    poison=1;
+   this-> poison=1;
 }
 void BaseKnight::giai_doc(){
-    poison=0;
+   this->poison=0;
 }
 int BaseKnight::getlevel(){
     return level;
@@ -590,6 +590,8 @@ void Tornbery::fight(BaseKnight*knight)
         {
                 knight->trung_doc();
                 knight->tim_do(knight);
+                // cout<<getSoluongItem(knight->getbag());
+                // cout<<knight->hasPoison();
                 if (knight->hasPoison() == 1)
                 {
                     knight->sethp(knight->gethp() - 10);
@@ -768,6 +770,7 @@ void ArmyKnights::fightUltimecia()
         default:
                 break;
         }
+        // cout<<hpBoss<<" ";
         if (hpBoss <= 0 && n > 0)
         {
                 
@@ -775,7 +778,8 @@ void ArmyKnights::fightUltimecia()
                 break;
         }   
         else{
-           delete quandoi[i];
+        //    delete quandoi[i];
+        quandoi[i]->sethp(0);
                 n--;
         }
     }
@@ -791,7 +795,8 @@ bool ArmyKnights::fight(BaseOpponent*opponent)  //nhung thay doi cua mang doi qu
     opponent->fight(quandoi[n]);
     while(quandoi[n]->gethp()<=0)
     {
-        delete quandoi[n];
+        // delete quandoi[n];
+
         n--;
         if(n==0)
         {
@@ -837,7 +842,7 @@ bool ArmyKnights::adventure(Events*events)
     BaseItem*item=nullptr;
     for (int i = 0; i < events->count(); i++)
     {
-        // cout<<events->get(i);
+        cout<<events->get(i);
         switch (events->get(i))
         {
         case 1:
@@ -940,9 +945,8 @@ BaseKnight *ArmyKnights::lastKnight() const
     {
         for (int i = soluong; i > 0; i--)
         {
-            if(quandoi[i]->getId()<=soluong&&quandoi[i]->getId()>=1) return quandoi[i];
+            if(quandoi[i]->gethp()>0&&quandoi[i]->gethp()<=999) return quandoi[i];
         }
-        
     }
     return nullptr;
 }
