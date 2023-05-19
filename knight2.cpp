@@ -97,7 +97,7 @@ bool Antidote::canUse(BaseKnight *knight)
 void Antidote::use(BaseKnight*knight)
 {
     knight->giai_doc();
-    cout<<"giai doc ne";
+    // cout<<"giai doc ne";
 }
 bool PhoenixdownI::canUse(BaseKnight*knight)
 {
@@ -142,11 +142,12 @@ void PhoenixdownIV::use(BaseKnight *knight)
 /* * * BEGIN implementation of class BaseKnight * * */
 BaseKnight::~BaseKnight()
 {
-    int n=getSoluongItem(bag);
-    for (int i = 0; i < n; i++)
-    {
-        popFront(&bag);
-    }
+    // int n=getSoluongItem(bag);
+    // for (int i = 0; i < n; i++)
+    // {
+    //     popFront(&bag);
+    // }
+    delete bag;
 }
 BaseBag*makeNode(BaseItem*item)
 {
@@ -218,17 +219,36 @@ void BaseKnight::tim_do(BaseKnight*knight)
 {
     BaseBag*tmp=bag;
     int i=0;
-    while(tmp!=NULL){
-        i++;
-        if(tmp->item->canUse(knight)==1)
+    
+    if(knight->hasPoison()==0)
+    {
+        while (tmp != NULL)
         {
-           cout<<tmp->item->getTypeItem();
-            swap(&bag,i);
-            bag->item->use(knight);
-            popFront(&bag);
-            break;
+            i++;
+            if (tmp->item->canUse(knight) == 1)
+            {
+                swap(&bag, i);
+                bag->item->use(knight);
+                popFront(&bag);
+                break;
+            }
+            tmp = tmp->next;
         }
-        tmp=tmp->next;
+    }
+    else if(knight->hasPoison()==1)
+    {
+        while (tmp != NULL)
+        {
+            i++;
+            if (tmp->item->getTypeItem()==ANTIDOTE)
+            {
+                swap(&bag, i);
+                bag->item->use(knight);
+                popFront(&bag);
+                break;
+            }
+            tmp = tmp->next;
+        }
     }
 }
 void BaseKnight::setbag()
@@ -735,7 +755,7 @@ ArmyKnights ::ArmyKnights(const string &file_armyknights)
 }
 ArmyKnights::~ArmyKnights()
 {
-    for (int i = 0; i < n + 1; i++)
+    for (int i = 1; i < n + 1; i++)
     {
         delete quandoi[i];
     }
@@ -783,11 +803,16 @@ void ArmyKnights::fightUltimecia()
                 n--;
         }
     }
-   if(hpBoss>0)
-   {
-    n=0;
-    winBoss=0;
-   }
+    if (hpBoss > 0)
+    {
+        winBoss = 0;
+        for (int i = soluong; i > 0; i--)
+        {
+                quandoi[i]->sethp(0);
+        }
+        n=0;
+    }
+//    cout<<winBoss;
 }
 bool ArmyKnights::fight(BaseOpponent*opponent)  //nhung thay doi cua mang doi quan se viet tren ham nay 
 {
@@ -803,7 +828,7 @@ bool ArmyKnights::fight(BaseOpponent*opponent)  //nhung thay doi cua mang doi qu
             return false;
             break;
         }
-        opponent->fight(quandoi[n]);
+        // opponent->fight(quandoi[n]);
     }
     if(quandoi[n]->getlevel()>10) quandoi[n]->setlevel(10);
     int i=n;
@@ -842,7 +867,7 @@ bool ArmyKnights::adventure(Events*events)
     BaseItem*item=nullptr;
     for (int i = 0; i < events->count(); i++)
     {
-        cout<<events->get(i);
+        // cout<<events->get(i);
         switch (events->get(i))
         {
         case 1:
@@ -857,20 +882,32 @@ bool ArmyKnights::adventure(Events*events)
             opponent= opponent->create(events->get(i));
             opponent->set_info(i,events->get(i));
             // cout<<quandoi[n]->gethp();
-            if(fight(opponent)==0) return false;
+            if(fight(opponent)==0)
+            {
+            printInfo();
+             return false;
+            }
             break;
         case 10:
             if(winOmegaWeapon==1) break;
             opponent=opponent->create(events->get(i));
             opponent->set_info(i,events->get(i));
-            if(fight(opponent)==0) return false;
+            if(fight(opponent)==0)
+            {
+            printInfo();
+             return false;
+            }
             winOmegaWeapon=opponent->winOmegaWeapon;
             break;
         case 11:
             if(winhades==1) break;
             opponent=opponent->create(events->get(i));
             opponent->set_info(i,events->get(i));
-            if(fight(opponent)==0) return false;
+            if(fight(opponent)==0)
+            {
+            printInfo();
+             return false;
+            }
             winhades=opponent->winHades;
             break;
         case 112:
@@ -911,9 +948,9 @@ bool ArmyKnights::adventure(Events*events)
             break;
         }
          printInfo();
-        
     }
-    return false;
+    if(lastKnight()->gethp()>0) winBoss=1;
+    return true;
 }
 int ArmyKnights::count() const //tra ve so luong knight
 {
