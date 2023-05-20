@@ -38,7 +38,7 @@ public:
     void setItemType(ItemType type);
     virtual bool canUse(BaseKnight *knight) = 0;
     virtual void use(BaseKnight *knight) = 0;
-   static BaseItem*create(ItemType type);
+    BaseItem*create(ItemType type);
 };
 class Antidote:public BaseItem
 {

@@ -316,6 +316,7 @@ void BaseKnight::setlevel(int le)
 }
 bool BaseKnight::is_Dragon(int maxhp)
 {
+    if(maxhp<100) return 0;
     int a = maxhp % 10;
     maxhp /= 10;
     int b = maxhp % 10;
